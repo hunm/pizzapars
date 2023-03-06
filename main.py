@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup as bs
+import json
 
 
 def get_category_blocks(ramen) -> list:
@@ -12,15 +13,22 @@ def get_category_blocks(ramen) -> list:
     return category_blocks
 
 
-def get_category_names(category_blocks: list) -> list:
-    category_names = []
+def parse_category_blocks(category_blocks: list) -> dict:
+    products = {}
     try:
         for block in category_blocks:
-            for el in block.findAll(class_="category-name"):
-                category_names.append(el.text.strip())
+            for category in block.findAll(class_="category-name"):
+                names = block.findAll(class_="name")
+                descriptions = block.findAll(class_="text-description")
+                prices = block.findAll(class_="price")
+                for i in range(0, len(names)):
+                    products[f"{category.text.strip()}"] = {"Название": f"{names[i].text.strip()}",
+                                                             "Описание": f"{descriptions[i].text.strip()}",
+                                                             "Цена": f"{prices[i].text.strip()}"}
     except:
         ...
-    return category_names
+    return products
+
 
 
 def main(url):
@@ -31,9 +39,8 @@ def main(url):
     page = requests.get(url, headers=headers)
     ramen = bs(page.text, "html.parser")
     category_blocks = get_category_blocks(ramen)
-    category_names = get_category_names(category_blocks)
-    for el in category_names:
-        print(el)
+    products = parse_category_blocks(category_blocks)
+    print(products)
 
 
 
