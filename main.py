@@ -30,7 +30,6 @@ def parse_category_blocks(category_blocks: list) -> dict:
     return products
 
 
-
 def main(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
